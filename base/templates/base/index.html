@@ -1,0 +1,121 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>HTML</title>
+        {% comment %}
+        <script src="{% static 'base/scripts/main.js'%}"></script>
+        {% endcomment %}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="{% static 'base/styles/style.css'%}" />
+    </head>
+
+    <body>
+        <header>
+            <h2>Aqua Level Monitoring System</h2>
+            <h5>admin</h5>
+        </header>
+        <nav>
+            <button>Home</button>
+            <button>Setting</button>
+        </nav>
+        <main>
+            <div class="container">
+                <div class="tank-container">
+                    <div class="tank">
+                        <p>Tank 1</p>
+                        <div class="tank-detail">
+                            <p><b>Water Level:</b></p>
+                            <h2 id="t-1">0%</h2>
+                        </div>
+                        <div class="tank-shell">
+                            <div id="t-1-l" class="tank-level"></div>
+                        </div>
+                    </div>
+                    <div class="tank-control">On</div>
+                </div>
+
+                <div class="tank-container">
+                    <div class="tank">
+                        <p>Tank 2</p>
+                        <div class="tank-detail">
+                            <p><b>Water Level:</b></p>
+                            <h2 id="t-2">0%</h2>
+                        </div>
+                        <div class="tank-shell">
+                            <div id="t-2-l" class="tank-level"></div>
+                        </div>
+                    </div>
+                    <div class="tank-control">On</div>
+                </div>
+
+                <div>
+                    <div>
+                        Form
+                        <form id="form">
+                            <input
+                                type="text"
+                                name="message"
+                                style="border: 2px solid black"
+                            />
+                            <input type="submit" />
+                            <br /><br /><br /><br /><br /><br /><br />
+                        </form>
+                    </div>
+                    <div id="messages">FIrst</div>
+                </div>
+            </div>
+        </main>
+        <footer></footer>
+        <script>
+            window.addEventListener("load", () => {
+                console.log("hi");
+            });
+
+            const tank_1 = document.getElementById("t-1")
+            const tank_2 = document.getElementById("t-2")
+            const tank_1_l = document.getElementById("t-1-l")
+            const tank_2_l = document.getElementById("t-2-l")
+
+            let messages = document.getElementById("messages");
+            let url = `ws://localhost:8000/ws/socket-server/`;
+            const ChatSocket = new WebSocket(url);
+
+            ChatSocket.addEventListener("message", (e) => {
+                let data = JSON.parse(e.data);
+                let tank_1_level = data["tank_1"];
+                let tank_2_level = data["tank_2"];
+
+                tank_1.innerHTML = tank_1_level + "%";
+                tank_2.innerHTML = tank_2_level + "%";
+                tank_1_l.style.height = tank_1_level + "%";
+                tank_2_l.style.height = tank_2_level + "%";
+            });
+
+            let form = document.getElementById("form");
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                let msg = e.target.message.value;
+
+                ChatSocket.send(
+                    JSON.stringify({
+                        type: "chat_message",
+                        message: msg,
+                    })
+                );
+                form.reset();
+            });
+        </script>
+    </body>
+</html>
