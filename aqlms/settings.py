@@ -29,7 +29,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ["127.0.0.1", "47.254.203.55"]
+#os.getenv("ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -86,7 +87,7 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [
                 (
-                    os.getenv("CHANNEL_LAYER")
+                    "redis://default:poRLHKvMdoUKQhzZKdOSqVqyfhOKKtMU@autorack.proxy.rlwy.net:19942"
                 )
             ],
         },

@@ -89,7 +89,7 @@
             const tank_2_l = document.getElementById("t-2-l")
 
             let messages = document.getElementById("messages");
-            let url = `ws://localhost:8000/ws/socket-server/`;
+let url = `ws://${window.location.host}/ws/socket-server/`;
             const ChatSocket = new WebSocket(url);
 
             ChatSocket.addEventListener("message", (e) => {
