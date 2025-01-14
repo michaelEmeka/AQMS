@@ -12,68 +12,85 @@
         {% endcomment %}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
             rel="stylesheet"
         />
-        <link rel="stylesheet" href="{% static 'base/styles/style.css'%}" />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+            rel="stylesheet"
+        />
+
+        <link
+            rel="stylesheet"
+            href="{% static 'base/styles/style.css' %} ?v=2"
+        />
     </head>
 
     <body>
         <header>
-            <h2>Aqua Level Monitoring System</h2>
-            <h5>admin</h5>
+            <img src="{% static 'base/images/logo.png'%}" />
+            <div>
+                <h2>Aqua Level Monitoring System(AQMS)</h2>
+                <h5 style="color: rgb(150, 149, 149); margin-top: 5px">
+                    admin
+                </h5>
+            </div>
         </header>
         <nav>
-            <button>Home</button>
-            <button>Setting</button>
+            <button><i class="fa-solid fa-house"></i></button>
+            <button><i class="fa-solid fa-gear"></i></button>
         </nav>
         <main>
             <div class="container">
                 <div class="tank-container">
                     <div class="tank">
-                        <p>Tank 1</p>
-                        <div class="tank-detail">
-                            <p><b>Water Level:</b></p>
-                            <h2 id="t-1">0%</h2>
+                        <div class="tank-header">
+                            <div class="tank-detail">
+                                <p>Tank 1</p>
+                                <p><b>Water Level:</b></p>
+                                <h2 id="t-1">0%</h2>
+                            </div>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="t-1_active"
+                                    id="t-1_active"
+                                />
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="tank-shell">
-                            <div id="t-1-l" class="tank-level"></div>
+                        <div class="main-tank-cont">
+                            <div class="tank-shell">
+                                <div id="t-1-l" class="tank-level"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="tank-control">On</div>
                 </div>
 
                 <div class="tank-container">
                     <div class="tank">
-                        <p>Tank 2</p>
-                        <div class="tank-detail">
-                            <p><b>Water Level:</b></p>
-                            <h2 id="t-2">0%</h2>
+                        <div class="tank-header">
+                            <div class="tank-detail">
+                                <p>Tank 2</p>
+                                <p><b>Water Level:</b></p>
+                                <h2 id="t-2">0%</h2>
+                            </div>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    id="t-2_active"
+                                    name="t-2_active"
+                                />
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="tank-shell">
-                            <div id="t-2-l" class="tank-level"></div>
+                        <div class="main-tank-cont">
+                            <div class="tank-shell">
+                                <div id="t-2-l" class="tank-level"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="tank-control">On</div>
-                </div>
-
-                <div>
-                    <div>
-                        Form
-                        <form id="form">
-                            <input
-                                type="text"
-                                name="message"
-                                style="border: 2px solid black"
-                            />
-                            <input type="submit" />
-                            <br /><br /><br /><br /><br /><br /><br />
-                        </form>
-                    </div>
-                    <div id="messages">FIrst</div>
                 </div>
             </div>
         </main>
@@ -83,39 +100,95 @@
                 console.log("hi");
             });
 
-            const tank_1 = document.getElementById("t-1")
-            const tank_2 = document.getElementById("t-2")
-            const tank_1_l = document.getElementById("t-1-l")
-            const tank_2_l = document.getElementById("t-2-l")
+            const tank_1 = document.getElementById("t-1");
+            const tank_2 = document.getElementById("t-2");
+            const tank_1_l = document.getElementById("t-1-l");
+            const tank_2_l = document.getElementById("t-2-l");
+            const t_1_active = document.getElementById("t-1_active");
+            const t_2_active = document.getElementById("t-2_active");
 
+            //console.log(t_2_active.checked)
             let messages = document.getElementById("messages");
             let url = `ws://${window.location.host}/ws/socket-server/`;
-            const ChatSocket = new WebSocket(url);
+            const webSocket = new WebSocket(url);
 
-            ChatSocket.addEventListener("message", (e) => {
-                let data = JSON.parse(e.data);
-                let tank_1_level = data["tank_1"];
-                let tank_2_level = data["tank_2"];
-
+            //Updates water levels
+            function updateWaterLevels(tank_1_level, tank_2_level) {
                 tank_1.innerHTML = tank_1_level + "%";
                 tank_2.innerHTML = tank_2_level + "%";
                 tank_1_l.style.height = tank_1_level + "%";
                 tank_2_l.style.height = tank_2_level + "%";
+            }
+            function updateToggleButton(toggle_button, status) {
+                //setup checkbox from database on connnected. a message is on connect, only frontend can modify this afterwards
+                if (status == "True" || status == true) {
+                    toggle_button.checked = true;
+                    //brighten tank
+                } else {
+                    toggle_button.checked = false;
+                    //darken tank
+                }
+            }
+            webSocket.addEventListener("message", (e) => {
+                let data = JSON.parse(e.data);
+                let s_type = data["type"];
+                let tank_1_level = data["tank_1"];
+                let tank_2_level = data["tank_2"];
+                let tank_1_active = data["t_1_active"];
+                let tank_2_active = data["t_2_active"];
+
+                //update tank level reading
+                /*s_types
+                stream: update only water levels
+                update_active_1: update only toggle botton 1
+                update_active_2: update only toggle botton 2
+                sync: update everything
+                */
+
+                if (s_type == "stream") {
+                    updateWaterLevels(tank_1_level, tank_2_level);
+                }
+                if (s_type == "update_active_1") {
+                    updateToggleButton(t_1_active, tank_1_active);
+                }
+                if (s_type == "update_active_2") {
+                    updateToggleButton(t_2_active, tank_2_active);
+                }
+                if (s_type == "sync") {
+                    updateWaterLevels(tank_1_level, tank_2_level);
+                    updateToggleButton(t_1_active, tank_1_active);
+                    updateToggleButton(t_2_active, tank_2_active);
+                }
             });
 
-            let form = document.getElementById("form");
-            form.addEventListener("submit", (e) => {
-                e.preventDefault();
-                let msg = e.target.message.value;
-
-                ChatSocket.send(
-                    JSON.stringify({
-                        type: "chat_message",
-                        message: msg,
-                    })
-                );
-                form.reset();
+            //Handle tank toggle
+            t_1_active.addEventListener("change", (e) => {
+                let data = {};
+                if (e.target.checked) {
+                    data["t_1_active"] = "True";
+                } else {
+                    data["t_1_active"] = "False";
+                }
+                data["type"] = "update_active_1";
+                webSocket.send(JSON.stringify(data));
             });
+            t_2_active.addEventListener("change", (e) => {
+                let data = {};
+                if (e.target.checked) {
+                    data["t_2_active"] = "True";
+                } else {
+                    data["t_2_active"] = "False";
+                }
+                data["type"] = "update_active_2";
+                webSocket.send(JSON.stringify(data));
+            });
+            webSocket.onerror = function (error) {
+                console.error("WebSocket Error:", error);
+            };
+
+            webSocket.onclose = function (event) {
+                console.log("WebSocket connection closed:", event);
+            };
         </script>
     </body>
 </html>
