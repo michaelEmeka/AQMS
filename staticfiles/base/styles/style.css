@@ -2,23 +2,43 @@
     border: 0;
     box-sizing: content-box;
     margin: 0;
-    
-}
-.montserrat-regular {
-  font-family: "Montserrat", serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
 }
 body {
-    font-size: 15pt;
     width: 100%;
+    background: #212429;
+    color: white;
+    font-family: "Montserrat", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
 }
-
+i {
+    font-size: 30px;
+    color: whitesmoke;
+}
+img{
+    width: 200px;
+    height: 200px;
+    transform: scale(0.5);
+    right: -10%;
+    position: absolute;
+    filter: opacity(.7);
+}
+button{
+    background: none;
+}
 header {
     margin-bottom: 100px;
+    padding: 50px 0 50px 50px;
+    background-image:  linear-gradient(to top right, #212429, rgb(56, 108, 219));
+    
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    align-items: center;
+    positio: fixed;
 }
-
+p{
+    color: rgb(56, 108, 219);
+}
 nav {
     width: 100%;
     height: 10%;
@@ -28,17 +48,17 @@ nav {
     display: flex;
     justify-content: space-evenly;
     z-index: 1;
-    backgrond: black;
+    background-color: rgba(42,45,50, 0.8);
+    backdrop-filter: blur(10px);
 }
 
 main {
-    
     width: 100%;
-    height: 100vh;
+    height: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    backgroun: black;
+    backgrond: black;
 }
 .container {
     width: 80%;
@@ -50,12 +70,15 @@ main {
 .tank-container {
     with: 100%;
     heiht: 40%;
+    
     min-hight: 300px;
-    background: #dfdfdf;
-    border-radius: 7px;
-    padding: 10px;
+    background: #2A2D32;
+    ackground: #dfdfdf;
+    border-radius: 10px;
+    padding: 20px;
     margin-bottom: 30px;
     display: flex;
+    max-width: 500px;
 }
 
 .tank {
@@ -63,7 +86,22 @@ main {
     height: 400px;
     width: 100%;
     max-height: 400px;
+    align-items: center;
+    justify-content: center;
     positin: relative;
+}
+.tank-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main-tank-cont{
+    width: 100%;
+    height: 77%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 .tank-shell {
     height: 77%;
@@ -71,14 +109,14 @@ main {
     max-heght: 700px;
     min-eight: 200px;
     position: relative;
-    border: 1px solid black;
+    border: 2px solid #414141;
     border-radius: 5px;
     width: 50%;
     bottom: 0;
 }
 .tank-level {
     width: 100%;
-    background: red;
+    background: rgb(56, 108, 219);
     bottom: 0;
     rigt: 0;
     position: absolute;
@@ -88,9 +126,72 @@ main {
 #t-1 {
     height: 73%;
     transition: 1s;
+    font-size: 300%;
 }
 
 #t-2 {
     height: 40%;
     transition: 1s;
+    font-size: 300%;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
